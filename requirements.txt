@@ -2,3 +2,4 @@ streamlit
 gitpython
 pathspec
 radon
+google-generativeai

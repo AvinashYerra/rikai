@@ -21,3 +21,9 @@ def save_repo_index(
         json.dump(output, f, indent=2)
 
     return output_path
+
+def save_reasoning_output(repo_path, data):
+    path = f"{repo_path}/.analysis/reasoning.json"
+    with open(path, "w") as f:
+        json.dump(data, f, indent=2)
+    return path
