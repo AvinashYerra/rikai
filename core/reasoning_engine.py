@@ -10,7 +10,7 @@ def run_reasoning(repo_analysis: dict) -> dict:
         "architecture": analyze_architecture(repo_analysis),
         "execution_flows": analyze_execution_flows(repo_analysis),
         # "design_tradeoffs": analyze_design_tradeoffs(repo_analysis),
-        "engineering_principles": analyze_principles(repo_analysis),
+        # "engineering_principles": analyze_principles(repo_analysis),
         # "risks_and_smells": analyze_risks(repo_analysis),
-        "extensions": analyze_extensions(repo_analysis),
+        # "extensions": analyze_extensions(repo_analysis),
     }

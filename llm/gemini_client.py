@@ -1,16 +1,14 @@
+from google import genai
 import os
 from dotenv import load_dotenv
-from google.generativeai import GenerativeModel
-import google.generativeai as genai
 
-load_dotenv()  # <-- loads .env
+load_dotenv()
 
-genai.configure(api_key=os.getenv("GOOGLE_API_KEY"))
+# Check for both possible API key names for flexibility
+api_key = os.getenv("GEMINI_API_KEY")
 
-model = GenerativeModel(
-    model_name="gemini-1.5-pro",
-    generation_config={
-        "temperature": 0.2,
-        "response_mime_type": "application/json"
-    }
-)
+if not api_key:
+    raise ValueError("GEMINI_API_KEY environment variable is not set")
+
+client = genai.Client(api_key=api_key)
+MODEL_NAME = "gemini-3-flash-preview"
