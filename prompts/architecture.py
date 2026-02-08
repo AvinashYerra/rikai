@@ -1,23 +1,19 @@
 def build_architecture_prompt(context: dict) -> str:
     return f"""
-You are a principal software architect.
+You are a senior software architect.
 
-Analyze the following repository metadata:
+Repository semantic context:
+{context['repo_context']}
 
-{context}
+Static analysis signals:
+{context['static_analysis']}
 
-Your task is to infer the system architecture and return EXACTLY ONE valid JSON object.
-Do NOT include explanations, markdown, comments, or extra text.
+Using BOTH:
+- Infer the real architecture
+- Avoid generic assumptions
+- Ground decisions in repository intent
 
-STRICT OUTPUT RULES:
-- Output must be valid JSON.
-- Follow the schema EXACTLY.
-- Do not add additional keys.
-- Do not rename fields.
-- Do not return null values.
-- If something is unknown, return an empty array [].
-- Keep descriptions concise (max 30 words).
-
+Respond in JSON with:
 JSON SCHEMA:
 
 {{

@@ -162,7 +162,11 @@ if url:
                         repo_analysis = json.load(f)
 
                     logger.info(f"Starting reasoning for project at: {data['path']}")
-                    reasoning_results = run_reasoning(repo_analysis)
+                    reasoning_results = run_reasoning(
+                        repo_url=url,
+                        repo_index=data["files"],
+                        repo_analysis=repo_analysis
+                    )
                     
                     # Log the output for debugging
                     logger.info("Reasoning complete. Output received.")
@@ -186,11 +190,11 @@ if url:
             with st.expander("Raw Reasoning Output (Debug)"):
                 st.json(output)
 
-            st.subheader("Architecture")
-            render_architecture_ui(output["architecture"])
+            # st.subheader("Architecture")
+            # render_architecture_ui(output["architecture"])
 
-            st.subheader("Execution Flows")
-            render_execution_flows(output["execution_flows"])
+            # st.subheader("Execution Flows")
+            # render_execution_flows(output["execution_flows"])
 
             # st.subheader("Engineering Principles")
             # st.json(output["engineering_principles"])
