@@ -16,6 +16,9 @@ from utils.analysis_writer import save_repo_analysis
 from core.reasoning_engine import run_reasoning
 from utils.reasoning_writer import save_reasoning_output
 
+from ui.architecture import render_architecture_ui
+from ui.execution_flows import render_execution_flows
+
 # Configure logging
 logging.basicConfig(
     level=logging.INFO,
@@ -31,8 +34,36 @@ if "analysis_data" not in st.session_state:
 if "reasoning_output" not in st.session_state:
     st.session_state.reasoning_output = None
 
-st.set_page_config(layout="wide")
-st.title("Repo Learning Engine")
+st.set_page_config(page_title="Rikai | Repo Learning Engine", layout="wide", page_icon="🧩")
+
+# Custom CSS for Premium Look
+st.markdown("""
+<style>
+    .main {
+        background-color: #0e1117;
+    }
+    .stButton>button {
+        width: 100%;
+        border-radius: 5px;
+        height: 3em;
+        background-color: #0a48b2;
+        color: #fff;
+        font-weight: bold;
+    }
+    .stButton>button:hover {
+        background-color: #0a48b2;
+        border: 1px solid #0a48b2;
+    }
+    .stMetric {
+        background-color: #1e1e1e;
+        padding: 15px;
+        border-radius: 10px;
+        border: 1px solid #333;
+    }
+</style>
+""", unsafe_allow_html=True)
+
+st.title("🧩 Rikai: Repo Learning Engine")
 
 url = st.text_input("Paste GitHub repository URL")
 
@@ -48,7 +79,7 @@ if url:
     if st.button("Analyze Repository"):
         #Phase 0
         path = clone_repo(owner, repo)
-        st.success(f"Repository cloned at {path}")
+        # st.success(f"Repository cloned at {path}")
 
         ignore_spec = build_ignore_spec()
         files = index_repository(path, ignore_spec)
@@ -156,14 +187,13 @@ if url:
                 st.json(output)
 
             st.subheader("Architecture")
-            st.json(output["architecture"])
+            render_architecture_ui(output["architecture"])
 
             st.subheader("Execution Flows")
-            st.json(output["execution_flows"])
+            render_execution_flows(output["execution_flows"])
 
-            st.subheader("Engineering Principles")
-            st.json(output["engineering_principles"])
+            # st.subheader("Engineering Principles")
+            # st.json(output["engineering_principles"])
 
-            st.subheader("Extension Ideas")
-            st.json(output["extensions"])
-
+            # st.subheader("Extension Ideas")
+            # st.json(output["extensions"])

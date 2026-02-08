@@ -4,3 +4,4 @@ pathspec
 radon
 python-dotenv
 google-genai
+streamlit-agraph
