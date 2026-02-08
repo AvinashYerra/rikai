@@ -1,4 +1,4 @@
-from llm.gemini_client import model
+from llm.gemini_client import client, MODEL_NAME
 from prompts.principles import build_principles_prompt
 
 
@@ -15,6 +15,12 @@ def analyze_principles(repo_context: dict) -> dict:
 
     prompt = build_principles_prompt(repo_context)
 
-    response = model.generate_content(prompt)
+    response = client.models.generate_content(
+        model=MODEL_NAME,
+        contents=prompt,
+        config={
+            'response_mime_type': 'application/json'
+        }
+    )
 
-    return response.candidates[0].content.parts[0].text
+    return response.text
