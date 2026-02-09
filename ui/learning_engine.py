@@ -8,12 +8,12 @@ def render_learning_engine(repo_data: dict):
     """
     Renders the 6-module learning experience with lazy loading.
     """
-    st.markdown("## 🎓 Learn This Repo")
+    st.markdown("## Learn This Repo")
     st.markdown("Explore the codebase through 6 specialized reasoning modules.")
 
     # Shared Context Preparation
     if "enriched_context" not in st.session_state:
-        if st.button("✨ Prepare Repository Wisdom"):
+        if st.button("Understand in detail"):
             with st.spinner("Gemini is building a semantic map of the repo..."):
                 try:
                     # Load the analysis data
@@ -39,12 +39,12 @@ def render_learning_engine(repo_data: dict):
 
     # Define Tabs
     tabs = st.tabs([
-        "🏛️ Architecture",
-        "⚙️ Execution Flows",
-        "⚖️ Design Tradeoffs",
-        "📜 Principles",
-        "🚨 Risks & Smells",
-        "🛤️ Extension Roadmap"
+        "Architecture",
+        "Execution Flows",
+        "Design Tradeoffs",
+        "Principles",
+        "Risks & Smells",
+        "Extension Roadmap"
     ])
 
     module_mapping = [
@@ -83,7 +83,7 @@ def render_module_with_lazy_load(key, label, repo_data):
         elif key == "extensions":
             render_extensions_ui(output[key])
             
-        if st.button(f"🔄 Refresh {label}", key=f"refresh_{key}"):
+        if st.button(f"Refresh {label}", key=f"refresh_{key}"):
             del st.session_state.reasoning_output[key]
             st.rerun()
     else:
@@ -94,7 +94,7 @@ def render_module_with_lazy_load(key, label, repo_data):
         </div>
         """, unsafe_allow_html=True)
         
-        if st.button(f"🧠 Unlock {label}", key=f"unlock_{key}"):
+        if st.button(f"Unlock {label}", key=f"unlock_{key}"):
             with st.spinner(f"Gemini is reasoning about {label.lower()}..."):
                 try:
                     result = run_module_reasoning(key, st.session_state.enriched_context)
@@ -114,7 +114,7 @@ def render_tradeoffs_ui(data):
     
     st.markdown("#### Design Decisions & Inferred Rationale")
     for decision in data.get("decisions", []):
-        with st.expander(f"📌 {decision['decision']}"):
+        with st.expander(f"{decision['decision']}"):
             st.markdown(f"**Rationale:** {decision['rationale']}")
             st.markdown(f"**Tradeoff:** {decision['tradeoff']}")
             st.caption(f"Confidence: {decision['confidence']}/10")
@@ -151,7 +151,7 @@ def render_extensions_ui(data):
     
     st.markdown("#### System Evolution Roadmap")
     for ext in data.get("roadmap", []):
-        with st.expander(f"🚀 {ext['feature']}"):
+        with st.expander(f"{ext['feature']}"):
             st.write(ext['description'])
             st.markdown(f"**Effort:** {ext['effort']} | **Impact:** {ext['impact']}")
             st.markdown(f"**Difficulty:** {ext['difficulty']}")

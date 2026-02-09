@@ -105,7 +105,7 @@ def render_sidebar():
         data = st.session_state.analysis_data
         stats = data.get("repo_stats", {})
         
-        st.sidebar.markdown("### 📊 Repo Summary")
+        st.sidebar.markdown("### Repo Summary")
         
         # Key Metrics
         c1, c2 = st.sidebar.columns(2)
@@ -125,20 +125,20 @@ def render_sidebar():
         # Entrypoints
         eps = data.get("entrypoints", [])
         if eps:
-            with st.sidebar.expander("🚪 Entry Points"):
+            with st.sidebar.expander("Entry Points"):
                 for ep in eps:
                     st.code(ep, language="text")
 
         # Dependencies
         deps = data.get("dependencies", [])
         if deps:
-            with st.sidebar.expander("📦 Dependencies"):
+            with st.sidebar.expander("Dependencies"):
                 st.write(", ".join(deps[:20]) + ("..." if len(deps)>20 else ""))
 
         # Complexity
         complexity = data.get("complexity", [])
         if complexity:
-            with st.sidebar.expander("📉 Complex Files"):
+            with st.sidebar.expander("Complex Files"):
                 sorted_comp = sorted(complexity, key=lambda x: x["cyclomatic_complexity"], reverse=True)[:5]
                 for item in sorted_comp:
                     st.caption(f"{item['path']} (CC: {item['cyclomatic_complexity']})")
@@ -146,9 +146,9 @@ def render_sidebar():
         # File Tree
         ascii_tree = data.get("ascii_tree", "")
         if ascii_tree:
-            with st.sidebar.expander("📂 File Tree", expanded=True):
+            with st.sidebar.expander("File Tree", expanded=True):
                 st.code(ascii_tree, language="text")
 
     elif not url:
         st.session_state.analyzed = False
-        st.sidebar.info("👈 Paste a GitHub URL to start analysis.")
+        st.sidebar.info("Paste a GitHub URL to start analysis.")

@@ -128,9 +128,9 @@ if st.session_state.analyzed:
     
     # Define Tabs
     tabs = st.tabs([
-        "🎓 Learn This Repo", 
-        "🕵️ PR Feedback Reviewer",
-        "🧭 Interactive Walkthrough"
+        "Learn This Repo", 
+        "PR Feedback Reviewer",
+        "Interactive Walkthrough"
     ])
     
     with tabs[0]:
@@ -147,5 +147,5 @@ if st.session_state.analyzed:
 
 else:
     # Placeholder State
-    st.info("👈 Please enter a valid GitHub repository URL in the sidebar to begin.")
+    st.info("Please enter a valid GitHub repository URL in the sidebar to begin.")
     st.image("https://placehold.co/1200x500?text=Rikai+Intelligence+Ready", caption="Repository Analysis Hub")

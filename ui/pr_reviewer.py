@@ -8,7 +8,7 @@ def render_pr_reviewer(analysis_data: dict):
     Renders the PR Feedback Reviewer UI.
     Requires context from the loaded repository.
     """
-    st.markdown("## 🕵️ PR Feedback Reviewer")
+    st.markdown("## PR Feedback Reviewer")
     st.markdown("Paste a GitHub Pull Request URL to get a deep architectural review based on this repository's design patterns.")
 
     # PR URL Input
@@ -85,19 +85,19 @@ def render_pr_reviewer(analysis_data: dict):
                 st.warning(f"Verdict: {verdict}")
 
         with c2:
-            st.markdown(f"### 🛡️ Top Priority Improvement")
+            st.markdown(f"### Top Priority Improvement")
             st.markdown(f"> {review.get('top_priority_improvement', 'No critical issues found.')}")
 
-        st.markdown("### 📝 Summary")
+        st.markdown("### Summary")
         st.write(review.get("summary", ""))
 
         # 2. Detailed Comments (GitHub style)
-        st.markdown("### 🔍 Detailed Feedback")
+        st.markdown("### Detailed Feedback")
         comments = review.get("comments", [])
         if comments:
             for comment in comments:
                 severity = comment.get("severity", "suggestion")
-                icon = "🔴" if severity == "critical" else "🟠" if severity == "major" else "🟡" if severity == "minor" else "💬"
+                icon = "[CRITICAL]" if severity == "critical" else "[MAJOR]" if severity == "major" else "[MINOR]" if severity == "minor" else "[INFO]"
                 
                 with st.expander(f"{icon} {comment.get('type').upper()} in {comment.get('file')}"):
                     st.markdown(f"**Issue:** {comment.get('issue')}")

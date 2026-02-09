@@ -28,7 +28,7 @@ def render_execution_flows(flow_data: dict):
             st.code(flow_data)
             return
 
-    st.header("⚙️ Execution Intelligence")
+    st.header("Execution Intelligence")
 
     render_entry_points(flow_data.get("entry_points", []))
     render_flows(flow_data.get("execution_flows", []))
@@ -41,7 +41,7 @@ def render_execution_flows(flow_data: dict):
 
 def render_entry_points(entry_points):
 
-    st.subheader("🚪 Entry Points")
+    st.subheader("Entry Points")
 
     if not entry_points:
         st.info("No entry points detected.")
@@ -70,7 +70,7 @@ def render_entry_points(entry_points):
 
 def render_flows(flows):
 
-    st.subheader("🔁 Execution Flows")
+    st.subheader("Execution Flows")
 
     if not flows:
         st.info("No flows detected.")
@@ -117,7 +117,7 @@ def render_flows(flows):
 
 def render_graph(flow):
 
-    st.markdown("### 🔗 Flow Graph")
+    st.markdown("### Flow Graph")
 
     nodes = []
     edges = []
@@ -157,7 +157,7 @@ def render_graph(flow):
 
 def render_branches(branches):
 
-    st.markdown("### 🌿 Control Branching")
+    st.markdown("### Control Branching")
 
     for branch in branches:
         st.info(
@@ -176,7 +176,7 @@ From → To
 
 def render_async(async_data):
 
-    st.subheader("⚡ Execution Model")
+    st.subheader("Execution Model")
 
     if not async_data:
         st.info("No async model detected.")

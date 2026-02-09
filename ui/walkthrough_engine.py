@@ -7,7 +7,7 @@ def render_walkthrough_engine(analysis_data: dict):
     """
     Renders the Interactive Architecture Walkthrough UI.
     """
-    st.markdown("## 🧭 Interactive Architecture Walkthrough")
+    st.markdown("## Interactive Architecture Walkthrough")
     st.markdown("Let Gemini lead you on a guided tour of how this system works, step-by-step.")
 
     # 1. Configuration & Start
@@ -19,11 +19,11 @@ def render_walkthrough_engine(analysis_data: dict):
         selected_flow = st.selectbox("Select a flow to explore:", flow_options)
     
     with col2:
-        beginner_mode = st.toggle("🍼 New Contributor Mode", help="Simplifies explanations for onboarding.")
+        beginner_mode = st.toggle("New Contributor Mode", help="Simplifies explanations for onboarding.")
 
     # 2. State Management for the Tour
     if "tour_data" not in st.session_state or st.session_state.get("current_flow") != selected_flow:
-        if st.button("🚀 Start Guided Tour"):
+        if st.button("Start Guided Tour"):
             with st.spinner("Gemini is preparing your architectural tour..."):
                 wisdom = st.session_state.get("reasoning_output", {})
                 context = {
@@ -68,13 +68,13 @@ def render_walkthrough_engine(analysis_data: dict):
                     st.session_state.tour_step += 1
                     st.rerun()
             else:
-                if st.button("🏁 Finish"):
+                if st.button("Finish"):
                     del st.session_state.tour_data
                     st.rerun()
 
         # Visual Context (Highlighted Mermaid)
         st.divider()
-        st.markdown("### 🗺️ Visual Progression")
+        st.markdown("### Visual Progression")
         
         # Modify the graph definition to highlight the current step
         base_graph = tour.get("graph_definition", "graph TD")
@@ -94,18 +94,18 @@ def render_walkthrough_engine(analysis_data: dict):
         nc1, nc2 = st.columns([2, 1])
         
         with nc1:
-            st.markdown(f"### 🎙️ {current_step.get('title')}")
+            st.markdown(f"### {current_step.get('title')}")
             st.markdown(f"**Location:** `{current_step.get('file')}`")
             st.info(current_step.get("narration"))
         
         with nc2:
-            st.markdown("#### 💡 Why This Matters")
+            st.markdown("#### Why This Matters")
             st.write(current_step.get("rationale"))
             
-            if st.button("🔍 Explore File", help="Jump to file details"):
+            if st.button("Explore File", help="Jump to file details"):
                 st.toast(f"Opening {current_step.get('file')}...")
                 # Note: Real file jumping would require more UI integration
 
-        if st.button("🛑 Stop Tour"):
+        if st.button("Stop Tour"):
             del st.session_state.tour_data
             st.rerun()

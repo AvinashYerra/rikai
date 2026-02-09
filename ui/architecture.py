@@ -31,7 +31,7 @@ def render_architecture_ui(architecture_data):
             return
 
     # Components Section
-    st.markdown("### 🧩 System Components")
+    st.markdown("### System Components")
     
     components_list = architecture_data.get("components", [])
     for comp in components_list:
@@ -50,7 +50,7 @@ def render_architecture_ui(architecture_data):
     # Execution Flows Section (Integrated)
     flows = architecture_data.get("flows", [])
     if flows:
-        st.markdown("### 🔄 Execution Flows")
+        st.markdown("### Execution Flows")
         
         # Create Mermaid graph definition
         mermaid_code = "graph TD\n"
@@ -90,7 +90,7 @@ def render_architecture_ui(architecture_data):
 
     # Boundaries Section
     if "boundaries" in architecture_data:
-        st.markdown("### 🛡️ Architecture Boundaries")
+        st.markdown("### Architecture Boundaries")
         boundaries = architecture_data["boundaries"]
         cols = st.columns(len(boundaries)) if boundaries else []
         for i, boundary in enumerate(boundaries):
