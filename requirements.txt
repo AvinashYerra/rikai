@@ -5,3 +5,4 @@ radon
 python-dotenv
 google-genai
 streamlit-agraph
+requests

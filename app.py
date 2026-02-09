@@ -2,22 +2,11 @@ import streamlit as st
 import json
 import logging
 import traceback
-from utils.validators import parse_github_url
-from core.repo_loader import clone_repo
-from core.repo_filter import build_ignore_spec
-from core.repo_indexer import index_repository
-from utils.json_writer import save_repo_index
-from core.dependency_parser import parse_requirements
-from core.project_classifier import classify_project
-from core.entrypoint_detector import detect_entrypoints
-from core.complexity_analyzer import analyze_complexity
-from core.test_detector import detect_tests
-from utils.analysis_writer import save_repo_analysis
-from core.reasoning_engine import run_reasoning
-from utils.reasoning_writer import save_reasoning_output
 
-from ui.architecture import render_architecture_ui
-from ui.execution_flows import render_execution_flows
+from ui.sidebar import render_sidebar
+from ui.learning_engine import render_learning_engine
+from ui.pr_reviewer import render_pr_reviewer
+from ui.walkthrough_engine import render_walkthrough_engine
 
 # Configure logging
 logging.basicConfig(
@@ -26,7 +15,7 @@ logging.basicConfig(
 )
 logger = logging.getLogger(__name__)
 
-# Initialize session state
+# Initialize session state variables if they don't exist
 if "analyzed" not in st.session_state:
     st.session_state.analyzed = False
 if "analysis_data" not in st.session_state:
@@ -34,170 +23,129 @@ if "analysis_data" not in st.session_state:
 if "reasoning_output" not in st.session_state:
     st.session_state.reasoning_output = None
 
-st.set_page_config(page_title="Rikai | Repo Learning Engine", layout="wide", page_icon="🧩")
+st.set_page_config(
+    page_title="Rikai | Repo Learning Engine",
+    layout="wide",
+    page_icon="🧩",
+    initial_sidebar_state="expanded"
+)
 
-# Custom CSS for Premium Look
+# --- Premium Global CSS ---
 st.markdown("""
 <style>
-    .main {
-        background-color: #0e1117;
+    @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&family=Outfit:wght@400;500;600;700&display=swap');
+
+    :root {
+        --text-size-base: 0.9rem;
+        --text-size-small: 0.8rem;
+        --text-size-header: 1.2rem;
     }
+
+    html, body, [class*="css"] {
+        font-family: 'Inter', sans-serif;
+        font-size: var(--text-size-base);
+    }
+
+    h1, h2, h3 {
+        font-family: 'Outfit', sans-serif;
+        font-weight: 600 !important;
+    }
+
+    h1 { font-size: 1.8rem !important; margin-bottom: 0.5rem !important; }
+    h2 { font-size: 1.4rem !important; margin-top: 1.5rem !important; }
+    h3 { font-size: 1.2rem !important; margin-top: 1rem !important; }
+
+    /* Button Styling */
     .stButton>button {
         width: 100%;
-        border-radius: 5px;
-        height: 3em;
-        background-color: #0a48b2;
-        color: #fff;
-        font-weight: bold;
+        border-radius: 8px;
+        font-size: var(--text-size-base);
+        font-weight: 500;
+        padding: 0.5rem 1rem;
+        background-color: #0d6efd;
+        color: white;
+        border: none;
+        transition: all 0.2s ease;
     }
+
     .stButton>button:hover {
-        background-color: #0a48b2;
-        border: 1px solid #0a48b2;
+        background-color: #0b5ed7;
+        box-shadow: 0 4px 12px rgba(13, 110, 253, 0.2);
+        transform: translateY(-1px);
     }
+
+    /* Metric Card Styling */
+    [data-testid="stMetricValue"] {
+        font-size: 1.4rem !important;
+        font-family: 'Outfit', sans-serif;
+    }
+    
     .stMetric {
-        background-color: #1e1e1e;
-        padding: 15px;
-        border-radius: 10px;
-        border: 1px solid #333;
+        background: rgba(255, 255, 255, 0.03);
+        border: 1px solid rgba(255, 255, 255, 0.1);
+        padding: 1rem;
+        border-radius: 12px;
+        backdrop-filter: blur(10px);
+    }
+
+    /* Expander Styling */
+    .streamlit-expanderHeader {
+        font-size: var(--text-size-base) !important;
+        font-weight: 500 !important;
+    }
+
+    /* Tabs Styling */
+    .stTabs [data-baseweb="tab-list"] {
+        gap: 1rem;
+    }
+
+    .stTabs [data-baseweb="tab"] {
+        height: 48px;
+        white-space: pre;
+        background-color: transparent;
+        border-radius: 8px;
+        color: #888;
+        font-weight: 500;
+        padding: 0 1rem;
+    }
+
+    .stTabs [aria-selected="true"] {
+        background-color: rgba(13, 110, 253, 0.1) !important;
+        color: #0d6efd !important;
+        border-bottom: 2px solid #0d6efd !important;
     }
 </style>
 """, unsafe_allow_html=True)
 
-st.title("🧩 Rikai: Repo Learning Engine")
+# Render Sidebar (handles repo loading and analysis)
+render_sidebar()
 
-url = st.text_input("Paste GitHub repository URL")
+st.title("🧩 Rikai")
+st.caption("Advanced Repository Reasoning & Learning Engine")
 
-if url:
-    parsed = parse_github_url(url)
-
-    if not parsed:
-        st.error("Invalid GitHub repository URL")
-        st.stop()
-
-    owner, repo = parsed
-
-    if st.button("Analyze Repository"):
-        #Phase 0
-        path = clone_repo(owner, repo)
-        # st.success(f"Repository cloned at {path}")
-
-        ignore_spec = build_ignore_spec()
-        files = index_repository(path, ignore_spec)
-
-        index_path = save_repo_index(path, owner, repo, files)
-        
-        #Phase 1
-        dependencies = parse_requirements(path)
-        project_type = classify_project(dependencies, files)
-        entrypoints = detect_entrypoints(path)
-        complexity = analyze_complexity(path)
-        test_info = detect_tests(files)
-
-        #Save Phase 1 Artifact
-        analysis_path = save_repo_analysis(
-            repo_path=path,
-            project_type=project_type,
-            dependencies=dependencies,
-            entrypoints=entrypoints,
-            complexity=complexity,
-            test_info=test_info
-        )
-
-        st.session_state.analyzed = True
-        st.session_state.analysis_data = {
-            "path": path,
-            "owner": owner,
-            "repo": repo,
-            "files": files,
-            "index_path": index_path,
-            "analysis_path": analysis_path,
-            "project_type": project_type,
-            "dependencies": dependencies,
-            "entrypoints": entrypoints,
-            "complexity": complexity,
-            "test_info": test_info
-        }
-
-    if st.session_state.analyzed:
-        data = st.session_state.analysis_data
-        
+if st.session_state.analyzed:
+    data = st.session_state.analysis_data
+    
+    # Define Tabs
+    tabs = st.tabs([
+        "🎓 Learn This Repo", 
+        "🕵️ PR Feedback Reviewer",
+        "🧭 Interactive Walkthrough"
+    ])
+    
+    with tabs[0]:
         st.divider()
-        st.header("Static Understanding")
-        
-        
-        st.metric("Total files", len(data["files"]))
-        st.subheader("Project Type")
-        st.info(data["project_type"])
-        
+        render_learning_engine(data)
 
-        st.subheader("Dependencies")
-        st.write(data["dependencies"])
-
-        st.subheader("Entry Points")
-        st.write(data["entrypoints"] if data["entrypoints"] else "No clear entrypoints detected")
-
-        st.subheader("Testing")
-        if data["test_info"]["has_tests"]:
-            st.success(f"{data['test_info']['test_file_count']} test files detected")
-        else:
-            st.warning("No tests detected")
-
-        st.subheader("Most Complex Files")
-        st.dataframe(
-            sorted(
-                data["complexity"],
-                key=lambda x: x["cyclomatic_complexity"],
-                reverse=True
-            )[:10]
-        )
-
-        #Phase 2
+    with tabs[1]:
         st.divider()
-        st.header("Phase 2: Deep Reasoning (Gemini)")
+        render_pr_reviewer(data)
 
-        if st.button("Run Architectural Reasoning"):
-            with st.spinner("Running multi-step reasoning using Gemini..."):
-                try:
-                    with open(data["analysis_path"]) as f:
-                        repo_analysis = json.load(f)
+    with tabs[2]:
+        st.divider()
+        render_walkthrough_engine(data)
 
-                    logger.info(f"Starting reasoning for project at: {data['path']}")
-                    reasoning_results = run_reasoning(
-                        repo_url=url,
-                        repo_index=data["files"],
-                        repo_analysis=repo_analysis
-                    )
-                    
-                    # Log the output for debugging
-                    logger.info("Reasoning complete. Output received.")
-                    logger.debug(f"Reasoning output: {json.dumps(reasoning_results, indent=2)}")
-                    
-                    reasoning_path = save_reasoning_output(data["path"], reasoning_results)
-                    st.session_state.reasoning_output = reasoning_results
-                    st.session_state.reasoning_path = reasoning_path
-                    
-                except Exception as e:
-                    logger.error(f"Error during reasoning: {str(e)}")
-                    logger.error(traceback.format_exc())
-                    st.error(f"An error occurred during architectural reasoning: {str(e)}")
-                    st.info("Check the terminal logs for more details.")
-
-        if st.session_state.reasoning_output:
-            output = st.session_state.reasoning_output
-            # st.success(f"Reasoning output saved at {st.session_state.reasoning_path}")
-
-            # Display Raw Output for developers
-            with st.expander("Raw Reasoning Output (Debug)"):
-                st.json(output)
-
-            # st.subheader("Architecture")
-            # render_architecture_ui(output["architecture"])
-
-            # st.subheader("Execution Flows")
-            # render_execution_flows(output["execution_flows"])
-
-            # st.subheader("Engineering Principles")
-            # st.json(output["engineering_principles"])
-
-            # st.subheader("Extension Ideas")
-            # st.json(output["extensions"])
+else:
+    # Placeholder State
+    st.info("👈 Please enter a valid GitHub repository URL in the sidebar to begin.")
+    st.image("https://placehold.co/1200x500?text=Rikai+Intelligence+Ready", caption="Repository Analysis Hub")
